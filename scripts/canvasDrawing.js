@@ -4,8 +4,6 @@ var digit_reader_ns = new function () {
 	var canvas = document.querySelector('#digitReaderCanvas');
 	var c = canvas.getContext('2d');
 
-	console.log(canvas);
-
 	var cursor = {
 		x: undefined,
 		y: undefined
@@ -17,7 +15,29 @@ var digit_reader_ns = new function () {
 
 	var drawing = false;
 
+	// Mouse handling
 	window.addEventListener('mousemove', function(event) {
+		draw(event);
+	});
+	window.addEventListener('mousedown', function(event) {
+		startDrawing();
+	});
+	window.addEventListener('mouseup', function(event) {
+		stopDrawing();
+	});
+
+	// Touch handling
+	window.addEventListener('ontouchmove', function(event) {
+		draw(event);
+	});
+	window.addEventListener('ontouchstart', function(event) {
+		startDrawing();
+	});
+	window.addEventListener('ontouchend', function(event) {
+		stopDrawing();
+	});
+
+	var draw = function(event) {
 		getMousePos(event);
 
 		// draw if needed
@@ -33,15 +53,15 @@ var digit_reader_ns = new function () {
 			lastCursor.x = cursor.x;
 			lastCursor.y = cursor.y;
 		}
-	})
-	window.addEventListener('mousedown', function(event) {
+	}
+	var startDrawing = function() {
 		drawing = true;
 		c.fillStyle = '#000000';
-	})
-	window.addEventListener('mouseup', function(event) {
+	}
+	var stopDrawing = function() {
 		drawing = false;
 		resetLastCursor();
-	})
+	}
 
 	var drawCircle = function(x,y, radius) {
 		c.beginPath();
