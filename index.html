@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<title> Nikolay Stoynov </title>
+
+</head>
+
+<body>
+
+<h1> Projects  </h1>
+
+<div id='testdiv'>
+	<h2> Digit Reader </h2>
+	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph1(10,3,10)">Pattern 1</button>
+	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph2(10,3,10)">Pattern 2</button>
+	<button type="button" onclick = "digit_reader_ns.invertCanvas()">Invert</button>
+	<button type="button" onclick = "drawing_ns.clearCanvas(); digit_reader_ns.clearCanvas()">Clear</button>
+	<button type="button" onclick = "neural_network_ns.recognizeDigit('digitReaderCanvas')">Recognize</button>
+</div>
+<canvas id="digitReaderCanvas", width="280", height="280"></canvas>
+<!-- <canvas id="debugCanvas", width="280", height="280"></canvas> -->
+<canvas id="debugCanvasSmall", width="28", height="28"></canvas>
+<p id='guessParagraph'></p>
+
+<script src="graphDrawing.js"></script>
+<script src="canvasDrawing.js"></script>
+<script src='network_parameters.js'></script>
+<script src="neuralNet.js"></script>
+</body>
+
+
+</html>

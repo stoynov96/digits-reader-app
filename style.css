@@ -1,0 +1,32 @@
+body{
+	background-color: #dfdce3;
+	font-family: Arial, Verdana, sans-serif;
+}
+
+h1,h2 {
+	padding: 4px;
+	border-bottom: 2px solid #fc4a1a;
+	border-left: 6px solid #fc4a1a;
+}
+h1 {
+	background: #4abdac;
+	color: white;
+	font-family: Verdana, Arial, sans-serif;
+}
+h2 {
+	background: #f7b733;
+	color: #fc4a1a;
+}
+
+
+div {
+	padding: 4px;
+}
+p {
+	background: #f7b733;
+	padding: 4px;
+}
+canvas {
+	background: white;
+	border: 2px solid #fc4a1a;
+}
