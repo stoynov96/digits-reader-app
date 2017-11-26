@@ -1,5 +1,5 @@
 var digit_reader_ns = new function () {
-	var brushRadius = 12;
+	var brushRadius = 10;
 
 	var canvas = document.querySelector('#digitReaderCanvas');
 	var c = canvas.getContext('2d');
@@ -26,7 +26,7 @@ var digit_reader_ns = new function () {
 		stopDrawing();
 	});
 
-	// Touch handling
+	// Touch handling - TODO
 	window.addEventListener('ontouchmove', function(event) {
 		draw(event);
 	});
@@ -41,7 +41,7 @@ var digit_reader_ns = new function () {
 		getMousePos(event);
 
 		// draw if needed
-		if (drawing) {
+		if (drawing && isMouseOnCanvas()) {
 			// connect last dot with the new one
 			c.beginPath();
 			c.moveTo(lastCursor.x, lastCursor.y);
@@ -77,6 +77,10 @@ var digit_reader_ns = new function () {
 	var resetLastCursor = function() {
 		lastCursor.x = undefined;
 		lastCursor.y = undefined;
+	}
+
+	var isMouseOnCanvas = function () {
+		return cursor.x >= 0 && cursor.x <= canvas.width && cursor.y >= 0 && cursor.y <= canvas.height;
 	}
 
 	this.invertCanvas = function() {

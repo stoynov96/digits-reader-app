@@ -14,10 +14,9 @@ h1 {
 	font-family: Verdana, Arial, sans-serif;
 }
 h2 {
-	background: #f7b733;
+	background: white;
 	color: #fc4a1a;
 }
-
 
 div {
 	padding: 4px;
@@ -25,8 +24,18 @@ div {
 p {
 	background: #f7b733;
 	padding: 4px;
+	color: white;
 }
 canvas {
 	background: white;
 	border: 2px solid #fc4a1a;
+}
+
+button {
+	background: #fc4a1a;
+	border: 2px solid #f7b733;
+	color: white;
+}
+button:hover {
+	color: #f7b733;
 }
