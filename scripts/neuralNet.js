@@ -26,7 +26,7 @@ var neural_network_ns = new function() {
 
 		var digit = 0;
 		var maxGuess = -1;
-		console.log(activations);
+		console.log('activations; ', activations);
 		for (var i = 0; i < activations.length; ++ i) {
 			if (activations[i] > maxGuess) {
 				maxGuess = activations[i];
@@ -81,8 +81,14 @@ var neural_network_ns = new function() {
 		var pixels = getRelevantData(imageData, dataLen);
 		// Normalize relevant data and store it
 		normalizeData (pixels, 255);
+		// Refit image (optimize side whitespace)
+		// pixels = refitImage(pixels, aLarge, 1);
 		// Resize data
 		pixels = resizeData (pixels, FIRST_LAYER_SIZE);
+
+		// DEBUG
+		// writeOnDebugCanvas(pixels, "#debugCanvas");
+		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
 
 		return pixels;
 	}
@@ -109,24 +115,158 @@ var neural_network_ns = new function() {
 		/*
 		Resizes an array of pixel values to a new length
 		Assumes newLength is smaller than array.length
+		converts "squares" of pixels to a single pixel
 		*/
-		// TODO: Make a sumation-based resize as opposed to just taking
-		// the first pixel of every square
 		array = new Array(newLength);
 
 		var aSmall = Math.floor(Math.sqrt(newLength));
 		var aLarge = Math.floor(Math.sqrt(oldArray.length));
+		// ratio is side of a square
 		var ratio = Math.floor(aLarge/aSmall);
 
-		for (var i = 0; i < aSmall; ++ i) {
-			for (var j = 0; j < aLarge; ++ j) {
-				// array[i][j] = oldArray[i*ratio][j*ratio];
-				array[i*aSmall + j] = oldArray[i*ratio*aLarge + j*ratio];
+		var newArrI = 0, newArrJ = 0;
+		for (var i = 0; i < aLarge; i += ratio) {
+			for (var j = 0; j < aLarge; j += ratio) {
+				// console.log(newArrI, ' ', newArrJ);
+				array[newArrI*aSmall + newArrJ]
+					= getSquareAverage(oldArray, aLarge, ratio, i, j);
+				++newArrJ;
 			}
+			newArrJ = 0;
+			++newArrI;
 		}
 
 		return array;
 	}
+	function refitImage(pixelData, squareSide, fillFract, pixelTreshold = 0.05) {
+		/*
+		Crops whitespace from the sides of a square image
+		pixelData - alpha pixel data (0 to 1) of image to be cropped
+		squareSide - side of the side of a square image (in pixels)
+		fillFract - fract of image height to be non-whitespace
+		pixelTreshold - minimum value of a pixel to be considered start of image
+		*/
+
+		// Get coordinates of new image
+		var firstRow = findFirstRow(pixelData, squareSide, pixelTreshold);
+		var lastRow = findLastRow(pixelData, squareSide, pixelTreshold);
+		var firstCol = findLeftMostCol(pixelData, squareSide, pixelTreshold);
+		var lastCol = findRightMostCol(pixelData, squareSide, pixelTreshold);
+
+		// console.log("vals: ", firstRow, lastRow, firstCol, lastCol);
+
+
+		// Error check fraction
+		if (fillFract < 0) {
+			console.log('invalid fraction. No Refitting will be done');
+			return;
+		}
+		if (fillFract > 1) {
+			console.log('invalid fraction. Resetting to 1');
+			fillFract = 1;
+		}
+
+		// Calculate required values
+		var newNonWhiteSqRows = 1 + lastRow - firstRow;
+		var newNonWhiteSqCols = 1 + lastCol - firstCol;
+		
+		var newSqSide = Math.floor( newNonWhiteSqRows / fillFract );
+
+		var newSideWhitespace 
+			= Math.floor((newSqSide - newNonWhiteSqCols) / 2); 
+		var newTopWhitespace 
+			= Math.floor((newSqSide - newNonWhiteSqRows) / 2);
+
+		console.log('optimized square side: ', newSqSide);	// debug
+		console.log('nsw: ', newSideWhitespace);	// debug
+
+		// 
+		var newPixelData = new Array(newSqSide * newSqSide).fill(0);
+
+		for (var i = firstRow; i <= lastRow; ++ i) {
+			for (var j = firstCol; j <= lastCol; ++ j) {
+				newI = i - firstRow + newTopWhitespace;
+				newJ = j - firstCol + newSideWhitespace;
+				newPixelData[newI*newSqSide + newJ]
+					= pixelData[i*squareSide + j];
+			}
+		}
+
+		return newPixelData;
+
+	}
+	/*
+	TODO: Change find functions to return all 4 paramters with one function
+		(pass them by reference)
+	*/
+	function findFirstRow(pixelData, squareSide, pixelTreshold) {
+		/*
+		Finds first filled row (non-whitespace) of an image
+		pixelData - alpha pixel data (0 to 1) of image to be cropped
+		squareSide - side of the side of a square image (in pixels)
+		pixelTreshold - minimum value of a pixel to be considered start of image
+		*/
+		for (var i = 0; i < squareSide; ++ i) {
+			for (var j = 0; j < squareSide; ++ j) {
+				if (pixelData[i*squareSide + j] > pixelTreshold) {
+					return i;
+				}
+			}
+		}
+	}
+	function findLastRow(pixelData, squareSide, pixelTreshold) {
+		/*
+		Finds last filled row (non-whitespace) of an image
+		pixelData - alpha pixel data (0 to 1) of image to be cropped
+		squareSide - side of the side of a square image (in pixels)
+		pixelTreshold - minimum value of a pixel to be considered start of image
+		*/
+		var lr = 0;	// last row
+		for (var i = 0; i < squareSide; ++ i) {
+			for (var j = 0; j < squareSide; ++ j) {
+				if (pixelData[i*squareSide + j] > pixelTreshold) {
+					lr = i;
+				}
+			}
+		}
+		return lr;
+	}
+	function findLeftMostCol(pixelData, squareSide, pixelTreshold) {
+		/*
+		Finds leftmost filled column (non-whitespace) of an image
+		pixelData - alpha pixel data (0 to 1) of image to be cropped
+		squareSide - side of the side of a square image (in pixels)
+		pixelTreshold - minimum value of a pixel to be considered start of image
+		*/
+		var minJ = squareSide;	// leftmost column
+		for (var i = 0; i < squareSide; ++ i) {
+			for (var j = 0; j < squareSide; ++ j) {
+				if (pixelData[i*squareSide + j] > pixelTreshold && j < minJ) {
+					minJ = j;;
+				}
+			}
+		}
+		return minJ;
+	}
+	function findRightMostCol(pixelData, squareSide, pixelTreshold) {
+		/*
+		Finds rightmost filled column (non-whitespace) of an image
+		pixelData - alpha pixel data (0 to 1) of image to be cropped
+		squareSide - side of the side of a square image (in pixels)
+		pixelTreshold - minimum value of a pixel to be considered start of image
+		*/
+		var maxJ = 0;	// rightmost column
+		for (var i = 0; i < squareSide; ++ i) {
+			for (var j = 0; j < squareSide; ++ j) {
+				if (pixelData[i*squareSide + j] > pixelTreshold && j > maxJ) {
+					maxJ = j;;
+				}
+			}
+		}
+		return maxJ;
+	}
+
+
 
 	this.recognizeDigit = function(canvasId) {
 		var canvas = document.querySelector("#" + canvasId);
@@ -140,9 +280,10 @@ var neural_network_ns = new function() {
 
 		var digit = feedForward(pixels);
 
-		console.log(digit);
+		console.log('guess: ', digit);
 
-		document.querySelector("#guessParagraph").innerText = digit;
+		document.querySelector("#guessParagraph").innerText 
+			= "My guess is " + digit;
 
 		context.putImageData(imageData,0,0);
 
@@ -159,5 +300,5 @@ var neural_network_ns = new function() {
 		}
 
 		context.putImageData(imageData,0,0);
-}
+	}
 }

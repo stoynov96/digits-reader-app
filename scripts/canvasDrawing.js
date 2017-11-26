@@ -18,10 +18,31 @@ var digit_reader_ns = new function () {
 	var drawing = false;
 
 	window.addEventListener('mousemove', function(event) {
+		draw(event);
+	});
+	window.addEventListener('mousedown', function(event) {
+		startDrawing();
+	});
+	window.addEventListener('mouseup', function(event) {
+		stopDrawing();
+	});
+
+	// Touch handling - TODO
+	window.addEventListener('ontouchmove', function(event) {
+		draw(event);
+	});
+	window.addEventListener('ontouchstart', function(event) {
+		startDrawing();
+	});
+	window.addEventListener('ontouchend', function(event) {
+		stopDrawing();
+	});
+
+	var draw = function(event) {
 		getMousePos(event);
 
 		// draw if needed
-		if (drawing) {
+		if (drawing && isMouseOnCanvas()) {
 			// connect last dot with the new one
 			c.beginPath();
 			c.moveTo(lastCursor.x, lastCursor.y);
@@ -57,6 +78,10 @@ var digit_reader_ns = new function () {
 	var resetLastCursor = function() {
 		lastCursor.x = undefined;
 		lastCursor.y = undefined;
+	}
+
+	var isMouseOnCanvas = function () {
+		return cursor.x >= 0 && cursor.x <= canvas.width && cursor.y >= 0 && cursor.y <= canvas.height;
 	}
 
 	this.invertCanvas = function() {
