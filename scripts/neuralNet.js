@@ -82,7 +82,7 @@ var neural_network_ns = new function() {
 		// Normalize relevant data and store it
 		normalizeData (pixels, 255);
 		// Refit image (optimize side whitespace)
-		pixels = refitImage(pixels, aLarge, 1);
+		// pixels = refitImage(pixels, aLarge, 1);
 		// Resize data
 		pixels = resizeData (pixels, FIRST_LAYER_SIZE);
 
