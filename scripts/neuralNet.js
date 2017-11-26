@@ -111,6 +111,23 @@ var neural_network_ns = new function() {
 			array[i] = array[i] / maxE;
 		}
 	}
+	function getSquareAverage(oldArray, oldArraySide, squareSide, startI, startJ) {
+		/*
+		Gets the average of pixel values (each between 0 and 1) within a square
+			with coordinates startI, startJ
+		Square is a part of oldArray and has a specified side.
+		*/
+		var sum = 0.0;
+		var endI = startI + squareSide;
+		var endJ = startJ + squareSide;
+		for (var i = startI; i < endI; ++ i) {
+			for (var j = startJ; j < endJ; ++ j) {
+				sum = sum + oldArray[i*oldArraySide + j];
+			}
+		}
+		var average = sum / (squareSide*squareSide)
+		return average;
+	}
 	function resizeData(oldArray, newLength) {
 		/*
 		Resizes an array of pixel values to a new length
@@ -138,6 +155,8 @@ var neural_network_ns = new function() {
 
 		return array;
 	}
+
+
 	function refitImage(pixelData, squareSide, fillFract, pixelTreshold = 0.05) {
 		/*
 		Crops whitespace from the sides of a square image
