@@ -1,5 +1,5 @@
 var digit_reader_ns = new function () {
-	var brushRadius = 12;
+	var brushRadius = 10;
 
 	var canvas = document.querySelector('#digitReaderCanvas');
 	var c = canvas.getContext('2d');
