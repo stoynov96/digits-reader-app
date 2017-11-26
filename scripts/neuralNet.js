@@ -84,10 +84,6 @@ var neural_network_ns = new function() {
 		// Resize data
 		pixels = resizeData (pixels, FIRST_LAYER_SIZE);
 
-		// DEBUG
-		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
-		// writeOnDebugCanvas(pixels, "#debugCanvas");
-
 		return pixels;
 	}
 	function getRelevantData(imageData, dataLen) {
@@ -109,58 +105,13 @@ var neural_network_ns = new function() {
 			array[i] = array[i] / maxE;
 		}
 	}
-
-	function getSquareAverage(oldArray, oldArraySide, squareSide, startI, startJ) {
-		/*
-		Gets the average of pixel values (each between 0 and 1) within a square
-			with coordinates startI, startJ
-		Square is a part of oldArray and has a specified side.
-		*/
-		var sum = 0.0;
-		var endI = startI + squareSide;
-		var endJ = startJ + squareSide;
-		for (var i = startI; i < endI; ++ i) {
-			for (var j = startJ; j < endJ; ++ j) {
-				sum = sum + oldArray[i*oldArraySide + j];
-			}
-		}
-		var average = sum / (squareSide*squareSide)
-		return average;
-	}
 	function resizeData(oldArray, newLength) {
 		/*
 		Resizes an array of pixel values to a new length
 		Assumes newLength is smaller than array.length
-
-		converts "squares" of pixels to a single pixel
 		*/
-		array = new Array(newLength);
-
-		var aSmall = Math.floor(Math.sqrt(newLength));
-		var aLarge = Math.floor(Math.sqrt(oldArray.length));
-		// ratio is side of a square
-		var ratio = Math.floor(aLarge/aSmall);
-
-		var newArrI = 0, newArrJ = 0;
-		for (var i = 0; i < aLarge; i += ratio) {
-			for (var j = 0; j < aLarge; j += ratio) {
-				// console.log(newArrI, ' ', newArrJ);
-				array[newArrI*aSmall + newArrJ]
-					= getSquareAverage(oldArray, aLarge, ratio, i, j);
-				++newArrJ;
-			}
-			newArrJ = 0;
-			++newArrI;
-		}
-
-		return array;
-	}
-	function resizeData_simple(oldArray, newLength) {
-		/*
-		Resizes an array of pixel values to a new length
-		Assumes newLength is smaller than array.length
-		*/
-		// TODO: Remove after implementing new method
+		// TODO: Make a sumation-based resize as opposed to just taking
+		// the first pixel of every square
 		array = new Array(newLength);
 
 		var aSmall = Math.floor(Math.sqrt(newLength));
