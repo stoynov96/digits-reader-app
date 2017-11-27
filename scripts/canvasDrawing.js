@@ -4,8 +4,6 @@ var digit_reader_ns = new function () {
 	var canvas = document.querySelector('#digitReaderCanvas');
 	var c = canvas.getContext('2d');
 
-	console.log(canvas);
-
 	var cursor = {
 		x: undefined,
 		y: undefined
@@ -17,8 +15,12 @@ var digit_reader_ns = new function () {
 
 	var drawing = false;
 
+	// Mouse Handling
 	window.addEventListener('mousemove', function(event) {
 		draw(event);
+		if (isMouseOnCanvas()) {
+			neural_network_ns.recognizeDigit(canvas.id);
+		}
 	});
 	window.addEventListener('mousedown', function(event) {
 		startDrawing();
@@ -54,15 +56,15 @@ var digit_reader_ns = new function () {
 			lastCursor.x = cursor.x;
 			lastCursor.y = cursor.y;
 		}
-	})
-	window.addEventListener('mousedown', function(event) {
+	}
+	var startDrawing = function() {
 		drawing = true;
 		c.fillStyle = '#000000';
-	})
-	window.addEventListener('mouseup', function(event) {
+	}
+	var stopDrawing = function() {
 		drawing = false;
 		resetLastCursor();
-	})
+	}
 
 	var drawCircle = function(x,y, radius) {
 		c.beginPath();

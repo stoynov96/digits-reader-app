@@ -111,6 +111,23 @@ var neural_network_ns = new function() {
 			array[i] = array[i] / maxE;
 		}
 	}
+	function getSquareAverage(oldArray, oldArraySide, squareSide, startI, startJ) {
+		/*
+		Gets the average of pixel values (each between 0 and 1) within a square
+			with coordinates startI, startJ
+		Square is a part of oldArray and has a specified side.
+		*/
+		var sum = 0.0;
+		var endI = startI + squareSide;
+		var endJ = startJ + squareSide;
+		for (var i = startI; i < endI; ++ i) {
+			for (var j = startJ; j < endJ; ++ j) {
+				sum = sum + oldArray[i*oldArraySide + j];
+			}
+		}
+		var average = sum / (squareSide*squareSide)
+		return average;
+	}
 	function resizeData(oldArray, newLength) {
 		/*
 		Resizes an array of pixel values to a new length
@@ -138,6 +155,8 @@ var neural_network_ns = new function() {
 
 		return array;
 	}
+
+
 	function refitImage(pixelData, squareSide, fillFract, pixelTreshold = 0.05) {
 		/*
 		Crops whitespace from the sides of a square image
@@ -276,7 +295,7 @@ var neural_network_ns = new function() {
 		var pixels = getPixelValues(imageData);
 		var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
-		writeOnDebugCanvas(pixels, "#debugCanvasSmall");
+		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
 
 		var digit = feedForward(pixels);
 
@@ -287,6 +306,30 @@ var neural_network_ns = new function() {
 
 		context.putImageData(imageData,0,0);
 
+	}
+
+	this.drawWeights = function(canvasId, weightNum = 0) {
+		/*
+		Displays the weights of the weightNum'th neuron of the first hidden layer
+		Most useful if no hidden layers are used
+			canvasId - canvas on which weights are displayed
+			weightNum - index of neuron from the second layer the weights of which should be displayed
+				this index is the digit if no hidden layers are present
+		*/
+		var canvas = document.querySelector("#" + canvasId);
+		var context = canvas.getContext('2d');
+		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
+
+		pixels = new Array(network.weights[0][weightNum].length);
+		for (var i = 0; i < pixels.length; ++ i) {
+			pixels[i] = getActivation(network.weights[0][weightNum][i]);
+		}
+
+		for (var i = 0; i < pixels.length; ++ i) {
+			imageData.data[3 + i*4] = pixels[i]*255;
+		}
+
+		context.putImageData(imageData,0,0);
 	}
 
 
