@@ -301,8 +301,8 @@ var neural_network_ns = new function() {
 
 		console.log('guess: ', digit);
 
-		document.querySelector("#guessParagraph").innerText 
-			= "My guess is " + digit;
+		document.querySelector("#guessSpan").innerText 
+			= digit;
 
 		context.putImageData(imageData,0,0);
 
