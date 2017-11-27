@@ -11,16 +11,32 @@
 
 <body>
 
-<h1 style="width: 50%;"> Projects </h1>
+<h1> Projects </h1>
 
-<div id='testdiv'>
-	<h2 style="width: 50%;"> Digit Reader </h2>
+<div>
+	<h2> Digit Reader </h2>
 	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph1(10,3,10)">Path</button>
 	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph2(10,3,10)">Star</button>
 	<button type="button" onclick = "drawing_ns.clearCanvas(); digit_reader_ns.clearCanvas()">Clear</button>
 </div>
-<canvas id="digitReaderCanvas", width="200", height="200"></canvas>
-<p id='guessParagraph' style="width: 50%;">My Guess is <span id='guessSpan'></p>
+<div style='display: inline-block;'>
+	<canvas id="digitReaderCanvas", width="200", height="200"></canvas>
+</div>
+<div style='display: inline-block;'>
+	<p>
+		<li class = 'text2'>The code of this app can be found 
+			<a href='https://github.com/stoynov96/digits-reader-site'>here</a>
+		</li>
+		<li class = 'text2'>The code of the custom made neural network can be found
+			<a href='https://github.com/stoynov96/Neural-Net'>here</a>
+		</li>
+	</p>
+</div>
+<p id='guessParagraph' class='text1'>My Guess is 
+	<span id='guessSpan'></span>
+	with a certainty of
+	<span id='certaintySpan'></span>
+</p>
 
 <script src="scripts/graphDrawing.js"></script>
 <script src="scripts/canvasDrawing.js"></script>

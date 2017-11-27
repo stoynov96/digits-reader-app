@@ -3,8 +3,13 @@ var neural_network_ns = new function() {
 
 	const FIRST_LAYER_SIZE = 784;
 
-	feedForward = function(input) {
-		// var activations = new Array(FIRST_LAYER_SIZE);
+	feedForward = function(input, certainty) {
+		/*
+		Feeds an input through the network
+			input: array of size FIRST_LAYER_SIZE that is to be processed by the neural net
+			certainty: value of certainty that the net has of its guess
+				this is the maximum activation value of the last layer 
+		*/
 		var activations = input;
 		var prev_activations = activations;
 		var zs;
@@ -33,6 +38,7 @@ var neural_network_ns = new function() {
 				digit = i;
 			}
 		}
+		certainty[0] = maxGuess;
 		return digit;
 	}
 
@@ -295,14 +301,15 @@ var neural_network_ns = new function() {
 		var pixels = getPixelValues(imageData);
 		var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
-		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
-
-		var digit = feedForward(pixels);
+		var certainty = new Array(1);
+		var digit = feedForward(pixels, certainty);
 
 		console.log('guess: ', digit);
 
 		document.querySelector("#guessSpan").innerText 
 			= digit;
+		document.querySelector('#certaintySpan').innerText
+			= (certainty[0]*100).toFixed(2) + '%';
 
 		context.putImageData(imageData,0,0);
 

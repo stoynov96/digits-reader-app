@@ -1,5 +1,6 @@
 body{
 	background-color: #dfdce3;
+	/*#dfdce3*/
 	font-family: Arial, Verdana, sans-serif;
 }
 
@@ -23,10 +24,14 @@ h2 {
 div {
 	padding: 4px;
 }
-p {
+.text1 {
 	background: #f7b733;
 	padding: 4px;
 	color: white;
+}
+.text2 {
+	padding: 4px;
+	color: #fc4a1a;
 }
 canvas {
 	background: white;
@@ -45,4 +50,9 @@ button:hover {
 #guessSpan {
 	color: #fc4a1a;
 	font-size: 24px;
+}
+
+#certaintySpan {
+	color: #fc4a1a;
+	font-size: 18px;
 }
