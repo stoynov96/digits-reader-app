@@ -7,6 +7,8 @@ h1,h2 {
 	padding: 4px;
 	border-bottom: 2px solid #fc4a1a;
 	border-left: 6px solid #fc4a1a;
+
+
 }
 h1 {
 	background: #4abdac;
@@ -38,4 +40,9 @@ button {
 }
 button:hover {
 	color: #f7b733;
+}
+
+#guessSpan {
+	color: #fc4a1a;
+	font-size: 24px;
 }
