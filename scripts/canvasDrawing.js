@@ -18,6 +18,9 @@ var digit_reader_ns = new function () {
 	// Mouse Handling
 	window.addEventListener('mousemove', function(event) {
 		draw(event);
+		if (isMouseOnCanvas()) {
+			neural_network_ns.recognizeDigit(canvas.id);
+		}
 	});
 	window.addEventListener('mousedown', function(event) {
 		startDrawing();

@@ -295,7 +295,7 @@ var neural_network_ns = new function() {
 		var pixels = getPixelValues(imageData);
 		var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
-		writeOnDebugCanvas(pixels, "#debugCanvasSmall");
+		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
 
 		var digit = feedForward(pixels);
 
@@ -306,6 +306,30 @@ var neural_network_ns = new function() {
 
 		context.putImageData(imageData,0,0);
 
+	}
+
+	this.drawWeights = function(canvasId, weightNum = 0) {
+		/*
+		Displays the weights of the weightNum'th neuron of the first hidden layer
+		Most useful if no hidden layers are used
+			canvasId - canvas on which weights are displayed
+			weightNum - index of neuron from the second layer the weights of which should be displayed
+				this index is the digit if no hidden layers are present
+		*/
+		var canvas = document.querySelector("#" + canvasId);
+		var context = canvas.getContext('2d');
+		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
+
+		pixels = new Array(network.weights[0][weightNum].length);
+		for (var i = 0; i < pixels.length; ++ i) {
+			pixels[i] = getActivation(network.weights[0][weightNum][i]);
+		}
+
+		for (var i = 0; i < pixels.length; ++ i) {
+			imageData.data[3 + i*4] = pixels[i]*255;
+		}
+
+		context.putImageData(imageData,0,0);
 	}
 
 
