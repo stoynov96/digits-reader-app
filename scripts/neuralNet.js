@@ -3,8 +3,17 @@ var neural_network_ns = new function() {
 
 	const FIRST_LAYER_SIZE = 784;
 
-	feedForward = function(input) {
-		// var activations = new Array(FIRST_LAYER_SIZE);
+	/*
+	Network traversal functions
+	*/
+
+	feedForward = function(input, certainty) {
+		/*
+		Feeds an input through the network
+			input: array of size FIRST_LAYER_SIZE that is to be processed by the neural net
+			certainty: value of certainty that the net has of its guess
+				this is the maximum activation value of the last layer 
+		*/
 		var activations = input;
 		var prev_activations = activations;
 		var zs;
@@ -33,6 +42,7 @@ var neural_network_ns = new function() {
 				digit = i;
 			}
 		}
+		certainty[0] = maxGuess;
 		return digit;
 	}
 
@@ -62,11 +72,13 @@ var neural_network_ns = new function() {
 
 
 
+
+
 	/*
 	Digit Recognition
 	*/
 
-	function getPixelValues(imageData) {
+	function getPixelValues(imageData, refitFillFraction) {
 		/*
 		Returns an array of FIRST_LAYER_SIZE numbers from 0 to 1
 		with the alpha values of each pixel to be fed in the net
@@ -82,12 +94,10 @@ var neural_network_ns = new function() {
 		// Normalize relevant data and store it
 		normalizeData (pixels, 255);
 		// Refit image (optimize side whitespace)
-		// pixels = refitImage(pixels, aLarge, 1);
+		pixels = refitImage(pixels, aLarge, refitFillFraction);
 		// Resize data
 		pixels = resizeData (pixels, FIRST_LAYER_SIZE);
-
 		// DEBUG
-		// writeOnDebugCanvas(pixels, "#debugCanvas");
 		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
 
 		return pixels;
@@ -132,8 +142,13 @@ var neural_network_ns = new function() {
 		/*
 		Resizes an array of pixel values to a new length
 		Assumes newLength is smaller than array.length
+			otherwise, it returns the old array
 		converts "squares" of pixels to a single pixel
 		*/
+		if (oldArray.length < newLength) {
+			return oldArray;
+		}
+
 		array = new Array(newLength);
 
 		var aSmall = Math.floor(Math.sqrt(newLength));
@@ -172,16 +187,19 @@ var neural_network_ns = new function() {
 		var firstCol = findLeftMostCol(pixelData, squareSide, pixelTreshold);
 		var lastCol = findRightMostCol(pixelData, squareSide, pixelTreshold);
 
-		// console.log("vals: ", firstRow, lastRow, firstCol, lastCol);
+		console.log("vals: ", firstRow, lastRow, firstCol, lastCol);
+
+		// Check if any black pixels are present
+		if (firstCol > lastCol) return pixelData;
 
 
 		// Error check fraction
 		if (fillFract < 0) {
-			console.log('invalid fraction. No Refitting will be done');
-			return;
+			// console.log('invalid fraction. No Refitting will be done');
+			return pixelData;
 		}
 		if (fillFract > 1) {
-			console.log('invalid fraction. Resetting to 1');
+			// console.log('invalid fraction. Resetting to 1');
 			fillFract = 1;
 		}
 
@@ -196,24 +214,79 @@ var neural_network_ns = new function() {
 		var newTopWhitespace 
 			= Math.floor((newSqSide - newNonWhiteSqRows) / 2);
 
-		console.log('optimized square side: ', newSqSide);	// debug
+		console.log('newSqSide: ', newSqSide);	// debug
 		console.log('nsw: ', newSideWhitespace);	// debug
 
-		// 
-		var newPixelData = new Array(newSqSide * newSqSide).fill(0);
+		// TODO: This assumes height > width. Fix to work in both cases
+		if (newNonWhiteSqCols > newNonWhiteSqRows)
+			return pixelData; // Temporary
+		// TODO: Remove when out-of-bounds bug is fixed
+		if (newSqSide > squareSide)
+			return pixelData;
 
-		for (var i = firstRow; i <= lastRow; ++ i) {
-			for (var j = firstCol; j <= lastCol; ++ j) {
-				newI = i - firstRow + newTopWhitespace;
-				newJ = j - firstCol + newSideWhitespace;
-				newPixelData[newI*newSqSide + newJ]
-					= pixelData[i*squareSide + j];
+		var newPixelData = new Array(newSqSide * newSqSide).fill(0);
+		for (var i = 0; i < newSqSide; ++ i) {
+			for (var j = 0; j < newSqSide; ++ j) {
+				var pixelData_i = firstRow + i - newTopWhitespace;
+				var pixelData_j = firstCol + j - newSideWhitespace;
+				pixelData_i = fitWithinBounds(pixelData_i, 0, squareSide-1);
+				pixelData_j = fitWithinBounds(pixelData_j, 0, squareSide-1);
+
+				newPixelData[i*newSqSide + j]
+					= pixelData[pixelData_i*squareSide + pixelData_j];
 			}
 		}
 
-		return newPixelData;
+		// DEBUG
+		// DEBUG_displayOnNewCanvas(newPixelData, newSqSide);
 
+		return newPixelData;
 	}
+	function fitWithinBounds(number, lowerBound, upperBound) {
+		/*
+		Retrurns a number fitted between lower and upper bound
+		if the number is not within bounds, the closes bound is returned
+		Parameters:
+			number - the number that needs to be fitted
+			lowerBound - minimum value to return
+			upperBound - maximum value to return
+		Returns: number between lowerBound and upperBound
+		*/
+		if (number < lowerBound) return lowerBound;
+		if (number > upperBound) return upperBound;
+		return number;
+	}
+	function DEBUG_displayOnNewCanvas(newPixelData, newSqSide) {
+		var ID = 'debugCanvas';
+		// Delete debug canvas if one exists
+		var debugCanv = document.querySelector('#' + ID);
+		if (debugCanv && debugCanv.parentElement) {
+			debugCanv.parentElement.removeChild(debugCanv);
+		}
+
+		// Create new debug canvas
+		debugCanv = document.createElement('canvas');
+		debugCanv.id = ID;
+		debugCanv.height = newSqSide;
+		debugCanv.width = newSqSide;
+
+		// Append new canvas as child
+		debugDiv.appendChild(debugCanv);
+
+		// Get context and image data
+		var context = debugCanv.getContext('2d');
+		var imageData = context.getImageData(0,0,debugCanv.width, debugCanv.height);
+
+		// Write on the new debug canvas
+		for (var i = 0; i < newPixelData.length; ++i) {
+			imageData.data[3 + i*4] = newPixelData[i]*255;
+		}
+
+		context.putImageData(imageData,0,0);
+
+		return newPixelData;
+	}
+
 	/*
 	TODO: Change find functions to return all 4 paramters with one function
 		(pass them by reference)
@@ -232,6 +305,7 @@ var neural_network_ns = new function() {
 				}
 			}
 		}
+		return squareSide;
 	}
 	function findLastRow(pixelData, squareSide, pixelTreshold) {
 		/*
@@ -240,7 +314,7 @@ var neural_network_ns = new function() {
 		squareSide - side of the side of a square image (in pixels)
 		pixelTreshold - minimum value of a pixel to be considered start of image
 		*/
-		var lr = 0;	// last row
+		var lr = squareSide;	// last row
 		for (var i = 0; i < squareSide; ++ i) {
 			for (var j = 0; j < squareSide; ++ j) {
 				if (pixelData[i*squareSide + j] > pixelTreshold) {
@@ -292,20 +366,22 @@ var neural_network_ns = new function() {
 		var context = canvas.getContext('2d');
 		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
 
-		var pixels = getPixelValues(imageData);
-		var pixelsSize = Math.floor(Math.sqrt(pixels.length));
+		var pixels = getPixelValues(imageData, 0.6);
+		// var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
-		// writeOnDebugCanvas(pixels, "#debugCanvasSmall");
-
-		var digit = feedForward(pixels);
+		var certainty = new Array(1);
+		var digit = feedForward(pixels, certainty);
 
 		console.log('guess: ', digit);
 
 		document.querySelector("#guessSpan").innerText 
 			= digit;
+		document.querySelector('#certaintySpan').innerText
+			= (certainty[0]*100).toFixed(2) + '%';
 
 		context.putImageData(imageData,0,0);
 
+		console.log('-------------');
 	}
 
 	this.drawWeights = function(canvasId, weightNum = 0) {
