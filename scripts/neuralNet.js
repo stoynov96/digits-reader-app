@@ -78,7 +78,7 @@ var neural_network_ns = new function() {
 	Digit Recognition
 	*/
 
-	function getPixelValues(imageData) {
+	function getPixelValues(imageData, refitFillFraction) {
 		/*
 		Returns an array of FIRST_LAYER_SIZE numbers from 0 to 1
 		with the alpha values of each pixel to be fed in the net
@@ -94,7 +94,7 @@ var neural_network_ns = new function() {
 		// Normalize relevant data and store it
 		normalizeData (pixels, 255);
 		// Refit image (optimize side whitespace)
-		// pixels = refitImage(pixels, aLarge, 0.90);
+		pixels = refitImage(pixels, aLarge, refitFillFraction);
 		// Resize data
 		pixels = resizeData (pixels, FIRST_LAYER_SIZE);
 		// DEBUG
@@ -195,11 +195,11 @@ var neural_network_ns = new function() {
 
 		// Error check fraction
 		if (fillFract < 0) {
-			console.log('invalid fraction. No Refitting will be done');
-			return;
+			// console.log('invalid fraction. No Refitting will be done');
+			return pixelData;
 		}
 		if (fillFract > 1) {
-			console.log('invalid fraction. Resetting to 1');
+			// console.log('invalid fraction. Resetting to 1');
 			fillFract = 1;
 		}
 
@@ -220,12 +220,18 @@ var neural_network_ns = new function() {
 		// TODO: This assumes height > width. Fix to work in both cases
 		if (newNonWhiteSqCols > newNonWhiteSqRows)
 			return pixelData; // Temporary
+		// TODO: Remove when out-of-bounds bug is fixed
+		if (newSqSide > squareSide)
+			return pixelData;
 
 		var newPixelData = new Array(newSqSide * newSqSide).fill(0);
 		for (var i = 0; i < newSqSide; ++ i) {
 			for (var j = 0; j < newSqSide; ++ j) {
 				var pixelData_i = firstRow + i - newTopWhitespace;
 				var pixelData_j = firstCol + j - newSideWhitespace;
+				pixelData_i = fitWithinBounds(pixelData_i, 0, squareSide-1);
+				pixelData_j = fitWithinBounds(pixelData_j, 0, squareSide-1);
+
 				newPixelData[i*newSqSide + j]
 					= pixelData[pixelData_i*squareSide + pixelData_j];
 			}
@@ -236,15 +242,42 @@ var neural_network_ns = new function() {
 
 		return newPixelData;
 	}
+	function fitWithinBounds(number, lowerBound, upperBound) {
+		/*
+		Retrurns a number fitted between lower and upper bound
+		if the number is not within bounds, the closes bound is returned
+		Parameters:
+			number - the number that needs to be fitted
+			lowerBound - minimum value to return
+			upperBound - maximum value to return
+		Returns: number between lowerBound and upperBound
+		*/
+		if (number < lowerBound) return lowerBound;
+		if (number > upperBound) return upperBound;
+		return number;
+	}
 	function DEBUG_displayOnNewCanvas(newPixelData, newSqSide) {
-		var debugCanv = document.createElement('canvas');
+		var ID = 'debugCanvas';
+		// Delete debug canvas if one exists
+		var debugCanv = document.querySelector('#' + ID);
+		if (debugCanv && debugCanv.parentElement) {
+			debugCanv.parentElement.removeChild(debugCanv);
+		}
+
+		// Create new debug canvas
+		debugCanv = document.createElement('canvas');
+		debugCanv.id = ID;
 		debugCanv.height = newSqSide;
 		debugCanv.width = newSqSide;
-		document.body.appendChild(debugCanv);
 
+		// Append new canvas as child
+		debugDiv.appendChild(debugCanv);
+
+		// Get context and image data
 		var context = debugCanv.getContext('2d');
 		var imageData = context.getImageData(0,0,debugCanv.width, debugCanv.height);
 
+		// Write on the new debug canvas
 		for (var i = 0; i < newPixelData.length; ++i) {
 			imageData.data[3 + i*4] = newPixelData[i]*255;
 		}
@@ -333,8 +366,8 @@ var neural_network_ns = new function() {
 		var context = canvas.getContext('2d');
 		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
 
-		var pixels = getPixelValues(imageData);
-		var pixelsSize = Math.floor(Math.sqrt(pixels.length));
+		var pixels = getPixelValues(imageData, 0.6);
+		// var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
 		var certainty = new Array(1);
 		var digit = feedForward(pixels, certainty);

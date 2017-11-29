@@ -1,26 +1,26 @@
 var digit_reader_ns = new function () {
+
+	class Cursor {
+		constructor(x = undefined, y = undefined) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+
 	var brushRadius = 10;
 
 	var canvas = document.querySelector('#digitReaderCanvas');
 	var c = canvas.getContext('2d');
 
-	var cursor = {
-		x: undefined,
-		y: undefined
-	}
-	var lastCursor = {
-		x: undefined,
-		y: undefined
-	}
+	var cursor = new Cursor();
+	var lastCursor = new Cursor();
 
 	var drawing = false;
 
 	// Mouse Handling
 	window.addEventListener('mousemove', function(event) {
-		draw(event);
-		if (isMouseOnCanvas()) {
-			neural_network_ns.recognizeDigit(canvas.id);
-		}
+		draw(event);		
 	});
 	window.addEventListener('mousedown', function(event) {
 		startDrawing();
@@ -31,17 +31,17 @@ var digit_reader_ns = new function () {
 
 	// Touch handling - TODO
 	window.addEventListener('ontouchmove', function(event) {
-		draw(event);
+
 	});
 	window.addEventListener('ontouchstart', function(event) {
-		startDrawing();
+
 	});
 	window.addEventListener('ontouchend', function(event) {
-		stopDrawing();
+
 	});
 
 	var draw = function(event) {
-		getMousePos(event);
+		cursor = getCursorCoords(event);
 
 		// draw if needed
 		if (drawing && isMouseOnCanvas()) {
@@ -51,10 +51,16 @@ var digit_reader_ns = new function () {
 			c.lineTo(cursor.x, cursor.y);
 			c.lineWidth = 2*brushRadius;
 			c.stroke();
+			
 			// draw new dot
 			drawCircle(cursor.x, cursor.y, brushRadius);
 			lastCursor.x = cursor.x;
 			lastCursor.y = cursor.y;
+
+			// recognize newly drawn digit
+			if (isMouseOnCanvas()) {
+				neural_network_ns.recognizeDigit(canvas.id);
+			}
 		}
 	}
 	var startDrawing = function() {
@@ -72,10 +78,12 @@ var digit_reader_ns = new function () {
 		c.fill();
 	}
 
-	var getMousePos = function(event) {
+	var getCursorCoords = function(event) {
 		rect = canvas.getBoundingClientRect();
-		cursor.x = event.clientX - rect.left;
-		cursor.y = event.clientY - rect.top;
+		return {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top
+		}
 	}
 	var resetLastCursor = function() {
 		lastCursor.x = undefined;
