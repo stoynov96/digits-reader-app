@@ -11,33 +11,39 @@
 
 <body>
 
-<h1> Projects </h1>
+<h1 class='mainHeading'> Projects </h1>
+<hr style="background-color: red;">
 
-<div>
-	<h2> Digit Reader </h2>
-	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph1(10,3,10)">Path</button>
-	<button type="button" onclick = "drawing_ns.clearCanvas(); drawing_ns.drawGraph2(10,3,10)">Star</button>
-	<button type="button" onclick = "drawing_ns.clearCanvas(); digit_reader_ns.clearCanvas()">Clear</button>
-</div>
-<div style='display: inline-block;'>
-	<canvas id="digitReaderCanvas", width="200", height="200"></canvas>
-	<!-- <canvas id='debugCanvas', width="100", height="100"></canvas> -->
-</div>
-<div style='display: inline-block;'>
-	<p>
-		<li class = 'text2'>The code of this app can be found 
-			<a href='https://github.com/stoynov96/digits-reader-site'>here</a>
-		</li>
-		<li class = 'text2'>The code of the custom made neural network can be found
-			<a href='https://github.com/stoynov96/Neural-Net'>here</a>
-		</li>
+<div class='contentBox'>
+
+	<div>
+		<h2 class='subHeading'> Digit Reader </h2>
+		<button class='canvasButton' type="button" onclick = "drawing_ns.clearCanvas(); digit_reader_ns.clearCanvas()">Clear</button>
+	</div>
+
+	<div style='display: inline-block;'>
+		<canvas id="digitReaderCanvas" class='drawCanvas', width="200", height="200"></canvas>
+	</div>
+
+	<div style='display: inline-block;'>
+		<p>
+			<li class='text2'>Please draw a digit on the canvas</li>
+			<li class='text2'>Observe text under the canvas - the network's attempt to recognize it</li>
+			<li class='text2'>The code of this app can be found 
+				<a href='https://github.com/stoynov96/digits-reader-site'>here</a>
+			</li>
+			<li class='text2'>The code of the custom made neural network can be found
+				<a href='https://github.com/stoynov96/Neural-Net'>here</a>
+			</li>
+		</p>
+	</div>
+
+	<p id='guessParagraph' class='text1'>My Guess is 
+		<span id='guessSpan'></span>
+		with a certainty of
+		<span id='certaintySpan'></span>
 	</p>
 </div>
-<p id='guessParagraph' class='text1'>My Guess is 
-	<span id='guessSpan'></span>
-	with a certainty of
-	<span id='certaintySpan'></span>
-</p>
 
 <script src="scripts/graphDrawing.js"></script>
 <script src="scripts/canvasDrawing.js"></script>

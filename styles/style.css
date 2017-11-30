@@ -1,50 +1,52 @@
 body{
-	background-color: #dfdce3;
+	background-color: white;
 	/*#dfdce3*/
 	font-family: Arial, Verdana, sans-serif;
 }
 
-h1,h2 {
-	padding: 4px;
-	border-bottom: 2px solid #fc4a1a;
-	border-left: 6px solid #fc4a1a;
-
-
-}
-h1 {
-	background: #4abdac;
-	color: white;
-	font-family: Verdana, Arial, sans-serif;
-}
-h2 {
-	background: white;
-	color: #fc4a1a;
-}
-
-div {
-	padding: 4px;
-}
-.text1 {
-	background: #f7b733;
-	padding: 4px;
-	color: white;
-}
-.text2 {
-	padding: 4px;
-	color: #fc4a1a;
-}
-canvas {
-	background: white;
-	border: 2px solid #fc4a1a;
+hr {
+	border-color: #e05038;
 }
 
 button {
-	background: #fc4a1a;
-	border: 2px solid #f7b733;
+	background: #f2cbbc;
+	border: 2px solid #e05038;
 	color: white;
 }
 button:hover {
-	color: #f7b733;
+	color: #e05038;
+}
+
+.mainHeading {
+	color: #e05038;
+	font-family: Verdana, Arial, sans-serif;
+}
+.subHeading {
+	color: #334431;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+.contentBox {
+	padding: 4px;
+	padding-left: 8%;
+}
+
+.drawCanvas {
+	border: 2px solid #e05038;
+}
+.canvasButton {
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	border-bottom: 0px;
+}
+
+.text1 {
+	padding: 4px;
+	color: #334431;
+}
+.text2 {
+	padding: 4px;
+	color: #334431;
 }
 
 #guessSpan {
