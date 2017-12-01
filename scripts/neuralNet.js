@@ -33,7 +33,7 @@ var neural_network_ns = new function() {
 
 		var digit = 0;
 		var maxGuess = -1;
-		console.log('activations; ', activations);
+		// console.log('activations; ', activations);
 		for (var i = 0; i < activations.length; ++ i) {
 			if (activations[i] > maxGuess) {
 				maxGuess = activations[i];
@@ -352,18 +352,15 @@ var neural_network_ns = new function() {
 
 
 
-	this.recognizeDigit = function(canvasId) {
+	this.recognizeDigit = function(canvasId, logToConsole = false) {
 		var canvas = document.querySelector("#" + canvasId);
 		var context = canvas.getContext('2d');
 		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
 
 		var pixels = getPixelValues(imageData, 0.6);
-		// var pixelsSize = Math.floor(Math.sqrt(pixels.length));
 
 		var certainty = new Array(1);
 		var digit = feedForward(pixels, certainty);
-
-		console.log('guess: ', digit);
 
 		document.querySelector("#guessSpan").innerText 
 			= digit;
@@ -372,7 +369,6 @@ var neural_network_ns = new function() {
 
 		context.putImageData(imageData,0,0);
 
-		console.log('-------------');
 	}
 
 	this.drawWeights = function(canvasId, weightNum = 0) {
