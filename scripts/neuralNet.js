@@ -20,13 +20,11 @@ var neural_network_ns = new function() {
 		var z;
 
 		for (var layer = 0; layer < network.biases.length; ++ layer) {
-			// console.log(network.biases[layer]);
 			zs = new Array(network.biases[layer].length);
 			prev_activations = activations;
 			activations = new Array(zs.length);
 
 			for (var neuron_in_layer = 0; neuron_in_layer < network.biases[layer].length; ++ neuron_in_layer) {
-				// console.log(neuron_in_layer, network.biases[layer][neuron_in_layer]);
 				z = getZ(network.biases[layer][neuron_in_layer], network.weights[layer][neuron_in_layer], prev_activations);
 				zs[neuron_in_layer] = z;
 				activations[neuron_in_layer] = getActivation(z);
@@ -159,7 +157,6 @@ var neural_network_ns = new function() {
 		var newArrI = 0, newArrJ = 0;
 		for (var i = 0; i < aLarge; i += ratio) {
 			for (var j = 0; j < aLarge; j += ratio) {
-				// console.log(newArrI, ' ', newArrJ);
 				array[newArrI*aSmall + newArrJ]
 					= getSquareAverage(oldArray, aLarge, ratio, i, j);
 				++newArrJ;
@@ -187,7 +184,6 @@ var neural_network_ns = new function() {
 		var firstCol = findLeftMostCol(pixelData, squareSide, pixelTreshold);
 		var lastCol = findRightMostCol(pixelData, squareSide, pixelTreshold);
 
-		console.log("vals: ", firstRow, lastRow, firstCol, lastCol);
 
 		// Check if any black pixels are present
 		if (firstCol > lastCol) return pixelData;
@@ -195,11 +191,9 @@ var neural_network_ns = new function() {
 
 		// Error check fraction
 		if (fillFract < 0) {
-			// console.log('invalid fraction. No Refitting will be done');
 			return pixelData;
 		}
 		if (fillFract > 1) {
-			// console.log('invalid fraction. Resetting to 1');
 			fillFract = 1;
 		}
 
@@ -214,15 +208,12 @@ var neural_network_ns = new function() {
 		var newTopWhitespace 
 			= Math.floor((newSqSide - newNonWhiteSqRows) / 2);
 
-		console.log('newSqSide: ', newSqSide);	// debug
-		console.log('nsw: ', newSideWhitespace);	// debug
-
 		// TODO: This assumes height > width. Fix to work in both cases
 		if (newNonWhiteSqCols > newNonWhiteSqRows)
 			return pixelData; // Temporary
 		// TODO: Remove when out-of-bounds bug is fixed
-		if (newSqSide > squareSide)
-			return pixelData;
+		// if (newSqSide > squareSide)
+		// 	return pixelData;
 
 		var newPixelData = new Array(newSqSide * newSqSide).fill(0);
 		for (var i = 0; i < newSqSide; ++ i) {

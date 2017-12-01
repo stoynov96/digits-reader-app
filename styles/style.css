@@ -1,6 +1,8 @@
 body{
+
+	background: url("https://i.imgur.com/QSgatOu.jpg") no-repeat fixed center;
+	background-size: cover;
 	background-color: white;
-	/*#dfdce3*/
 	font-family: Arial, Verdana, sans-serif;
 }
 
@@ -28,15 +30,16 @@ button:hover {
 
 .contentBox {
 	padding: 4px;
-	padding-left: 8%;
+	padding-left: 4%;
 }
 
 .drawCanvas {
+	background-color: white;
 	border: 2px solid #e05038;
 }
 .canvasButton {
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
 	border-bottom: 0px;
 }
 
@@ -47,6 +50,12 @@ button:hover {
 .text2 {
 	padding: 4px;
 	color: #334431;
+}
+
+.highlightSpan {
+	color: #e05038;
+	font-size: 18px;
+	font-weight: bold;
 }
 
 #guessSpan {

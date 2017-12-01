@@ -1,5 +1,7 @@
 var digit_reader_ns = new function () {
 
+	const CLEAR_KEYCODE = 82; // r
+
 	class Cursor {
 		constructor(x = undefined, y = undefined) {
 			this.x = x;
@@ -17,6 +19,11 @@ var digit_reader_ns = new function () {
 	var lastCursor = new Cursor();
 
 	var drawing = false;
+
+	// Clearing Canvas
+	window.addEventListener('keydown', function(event) {
+		digit_reader_ns.clearCanvas();
+	});
 
 	// Mouse Handling
 	window.addEventListener('mousemove', function(event) {

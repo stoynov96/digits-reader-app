@@ -11,8 +11,8 @@
 
 <body>
 
-<h1 class='mainHeading'> Projects </h1>
-<hr style="background-color: red;">
+<h1 class='mainHeading'> Project </h1>
+<hr style="background-color: #334431; border-color: #334431">
 
 <div class='contentBox'>
 
@@ -22,12 +22,32 @@
 	</div>
 
 	<div style='display: inline-block;'>
-		<canvas id="digitReaderCanvas" class='drawCanvas', width="200", height="200"></canvas>
+		<canvas id="digitReaderCanvas" class='drawCanvas', width="300", height="300"></canvas>
 	</div>
 
-	<div style='display: inline-block;'>
-		<p>
-			<li class='text2'>Please draw a digit on the canvas</li>
+
+	<div style='display: inline-block; vertical-align: top; margin-left: 20px;'>
+
+		<div id='controlsBox'>
+			<h3 class='subHeading' style='margin-top:0px;'> Controls </h3>
+			
+			<li class='text2'> 
+				<span class='highlightSpan'> Left click </span>
+				to begin drawing on the canvas
+			</li>
+			
+			<li class='text2'> 
+				<span class='highlightSpan'> R </span>
+				to clear the canvas
+			</li>
+			
+		</div>
+	
+		<hr style="background-color: #334431; border-color: #334431">
+	
+		<div id='explainationBox'>
+			<h3 class='subHeading'>How to use</h3>		
+			<li class='text2'>Draw a digit anywhere on the canvas</li>
 			<li class='text2'>Observe text under the canvas - the network's attempt to recognize it</li>
 			<li class='text2'>The code of this app can be found 
 				<a href='https://github.com/stoynov96/digits-reader-site'>here</a>
@@ -35,7 +55,7 @@
 			<li class='text2'>The code of the custom made neural network can be found
 				<a href='https://github.com/stoynov96/Neural-Net'>here</a>
 			</li>
-		</p>
+		</div>
 	</div>
 
 	<p id='guessParagraph' class='text1'>My Guess is 
