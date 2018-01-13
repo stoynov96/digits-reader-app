@@ -373,7 +373,7 @@ var neural_network_ns = new function() {
 
 	this.drawWeights = function(canvasId, weightNum = 0) {
 		/*
-		Displays the weights of the weightNum'th neuron of the first hidden layer
+		Displays the weights of the weightNum'th neuron of the second layer
 		Most useful if no hidden layers are used
 			canvasId - canvas on which weights are displayed
 			weightNum - index of neuron from the second layer the weights of which should be displayed
