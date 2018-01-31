@@ -248,6 +248,12 @@ var neural_network_ns = new function() {
 		return number;
 	}
 	function DEBUG_displayOnNewCanvas(newPixelData, newSqSide) {
+		/*
+		Creates a new canvas and draws pixel data on it
+		Parameters:
+			newPixelData - pixel data (alpha) to be written
+			newSqSide - side of the square of the image data to write
+		*/
 		var ID = 'debugCanvas';
 		// Delete debug canvas if one exists
 		var debugCanv = document.querySelector('#' + ID);
@@ -353,6 +359,12 @@ var neural_network_ns = new function() {
 
 
 	this.recognizeDigit = function(canvasId, logToConsole = false) {
+	/*
+	Collects image data from the main canvas and feeds it through a neural network
+	Paramteters:
+		canvasId - canvas from which image data will be collected
+		logToConsole - false - if output layer activations should be logged to the console
+	*/
 		var canvas = document.querySelector("#" + canvasId);
 		var context = canvas.getContext('2d');
 		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
@@ -397,6 +409,13 @@ var neural_network_ns = new function() {
 
 
 	function writeOnDebugCanvas(pixelData, canvasSelector) {
+		/*
+		This is a function used for debugging.
+		It writes pixel data to a designated debug canvas
+		Parameters:
+			pixelData - pixel data (transparency) that should be written
+			canvasSelector - debug canvas selector
+		*/
 		var canvas = document.querySelector(canvasSelector);
 		var context = canvas.getContext('2d');
 		var imageData = context.getImageData(0,0,canvas.width, canvas.height);
