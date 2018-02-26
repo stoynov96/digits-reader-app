@@ -7,7 +7,7 @@ var neural_network_ns = new function() {
 	Network traversal functions
 	*/
 
-	feedForward = function(input, certainty) {
+	feedForward = function(input, certainty, invoke_softmax = false) {
 		/*
 		Feeds an input through the network
 			input: array of size FIRST_LAYER_SIZE that is to be processed by the neural net
@@ -27,13 +27,17 @@ var neural_network_ns = new function() {
 			for (var neuron_in_layer = 0; neuron_in_layer < network.biases[layer].length; ++ neuron_in_layer) {
 				z = getZ(network.biases[layer][neuron_in_layer], network.weights[layer][neuron_in_layer], prev_activations);
 				zs[neuron_in_layer] = z;
-				activations[neuron_in_layer] = getActivation(z);
+				activations[neuron_in_layer] = sigmoid(z);
 			}
+		}
+
+		if (invoke_softmax) {
+			activations = softmax(zs);
 		}
 
 		var digit = 0;
 		var maxGuess = -1;
-		// console.log('activations; ', activations);
+		// console.log('activations softmax ', activations);
 		for (var i = 0; i < activations.length; ++ i) {
 			if (activations[i] > maxGuess) {
 				maxGuess = activations[i];
@@ -61,11 +65,32 @@ var neural_network_ns = new function() {
 		return sum;
 	}
 
-	function getActivation(z) {
+	function sigmoid(z) {
 	/*
 	Returns the sigmoid (1/(1+e^-z)) of z
 	*/
 		return 1/(1+Math.pow(Math.E,-z));
+	}
+
+	function softmax(zs) {
+	/*
+	Transforms an array of output neuron activations to softmax
+	Parameters:
+		zs: 		weighted inputs of the layer for which softmax is taken
+	*/
+		var esum = 0.0;
+		var activations = new Array(zs.length);
+
+		// Get the exponent sum
+		for (var i = 0; i < activations.length; ++ i) {
+			esum += Math.pow(Math.E, zs[i]);
+		}
+
+		for (var i = 0; i < activations.length; ++ i) {
+			activations[i] = Math.pow(Math.E, zs[i]) / esum;
+		}
+		
+		return activations;
 	}
 
 
@@ -372,7 +397,7 @@ var neural_network_ns = new function() {
 		var pixels = getPixelValues(imageData, 0.6);
 
 		var certainty = new Array(1);
-		var digit = feedForward(pixels, certainty);
+		var digit = feedForward(pixels, certainty, true);
 
 		document.querySelector("#guessSpan").innerText 
 			= digit;
@@ -397,7 +422,7 @@ var neural_network_ns = new function() {
 
 		pixels = new Array(network.weights[0][weightNum].length);
 		for (var i = 0; i < pixels.length; ++ i) {
-			pixels[i] = getActivation(network.weights[0][weightNum][i]);
+			pixels[i] = sigmoid(network.weights[0][weightNum][i]);
 		}
 
 		for (var i = 0; i < pixels.length; ++ i) {

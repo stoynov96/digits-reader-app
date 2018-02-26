@@ -34,6 +34,7 @@ var digit_reader_ns = new function () {
 	});
 	window.addEventListener('mouseup', function(event) {
 		stopDrawing();
+		neural_network_ns.recognizeDigit(canvas.id);
 	});
 
 	// Touch handling - TODO
@@ -66,7 +67,7 @@ var digit_reader_ns = new function () {
 
 			// recognize newly drawn digit
 			if (isMouseOnCanvas()) {
-				neural_network_ns.recognizeDigit(canvas.id);
+				// neural_network_ns.recognizeDigit(canvas.id);
 			}
 		}
 	}
